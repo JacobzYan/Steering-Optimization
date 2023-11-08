@@ -30,7 +30,7 @@ def cartesian_product_on_the_fly_mm():
                 process_combination(a[i],l_1[j],l_2[k])
 
 @jit(nopython=True,parallel=True)
-def cartesian_product_on_the_fly_rad():
+def optimized_theta_2_linspace():
     theta_2=np.linspace(-np.pi, np.pi, 1001)
     return theta_2
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
                                     number=1)
     print(f"Elapsed time for cartesian_product_on_the_fly_mm: {elapsed_time_mm} seconds")
 
-    elapsed_time_rad = timeit.timeit("cartesian_product_on_the_fly_rad()", 
+    elapsed_time_rad = timeit.timeit("optimized_theta_2_linspace()", 
                                      globals=globals(), 
                                      number=1)
-    print(f"Elapsed time for cartesian_product_on_the_fly_rad: {elapsed_time_rad} seconds")
+    print(f"Elapsed time for optimized_theta_2_linspace(): {elapsed_time_rad} seconds")
