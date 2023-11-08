@@ -41,4 +41,21 @@ class SteeringGeomtery:
         # Define Equivalent Thickness wt
         self.wt = (self.w_track - self.l_rack)/2.0 # Equivalent steering thickness [mm]
 
+    def __str__(self):
+        # Create a list of defined variables
+        vars = filter(lambda x: x[0,1] != '--', dir())
+
+        # For each variable, print the name and value
+        for i in vars:
+            temp = -1;
+            exec(f'temp = {i}')
+            print(f'{i}: {temp}')
+        
+    def getVar(**var_names):
+        # Create a list of defined variables
+        vars = filter(lambda x: x[0,1] != '--', dir())
+        
+        for i in var_names:
+            i
+
 
