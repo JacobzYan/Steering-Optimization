@@ -1,5 +1,5 @@
 #  Class that defines relevant info about steering geometry
-
+import numpy as np
 
 
 
@@ -17,14 +17,14 @@ class SteeringGeometry:
         ## Default values DEFINE NEW VARAIBLES IN THIS SECTION
         # Constants
         self.wb = 1500 # Wheelbase [mm]
-        self.x_travel = 200 # Steering rack travel [mm]
-        self.w_track = 900 # Track width [mm]
+        self.x_travel = 30 # Steering rack travel [mm]
+        self.w_track = 800 # Track width [mm]
         self.l_rack = 300 # Steering rack length [mm]
         # Variables
         self.rack_spacing = 200 # Front/back distance between steering rack axis and control arm bearing mounting
-        self.l_tierod = 20 # Tierod length [mm]
-        self.l_str_arm = 40 # distance from control arm mounts to steering arm mount [mm]
-        self.phi = 5 # Steering Arm offset angle [deg]
+        self.l_tierod = 250 # Tierod length [mm]
+        self.l_str_arm = 100 # distance from control arm mounts to steering arm mount [mm]
+        self.phi = 11*np.pi/180 # Steering Arm offset angle [deg]
         # Dependent Variables
         self.wt = self.w_track - self.l_rack # Equivalent steering thickness [mm]
 
