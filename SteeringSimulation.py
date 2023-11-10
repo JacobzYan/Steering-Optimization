@@ -40,7 +40,11 @@ def sim(geom: str, num_fit_points: int):
 
     return error
 
-
+def theta2(a, wt, l1, l2, x):
+    d = (a**2 + wt**2)**0.5
+    theta_12 = np.arccos((l1**2 + l2**2 - d**2) / (2*l1*l2))
+    theta_a = np.arccos((l1**2 - l2**2 + d**2) / (2*l2*d))
+    theta_d =  np.arctan(a / (wt - x))
 
 a = str()
 print(a)
