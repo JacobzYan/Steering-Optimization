@@ -6,47 +6,56 @@ import numpy as np
 
 
 # Returns an error value for given geometry
+# Inputs: geom -> Steering Geometry object, num_fit_points -> The length of the output vectors
+# Outputs: a vector of inner wheel angles, a vector of outer wheel angles, a vector of ideal outer wheel angles
 def sim(geom: str, num_fit_points: int):
     
-    # # Establish theta 2 range
-    # theta2 = np.linspace(-np.pi, np.pi, num_fit_points)
-    # geom.wt = geom.w_track - geom.l_rack
-    # geom.phi = 
-    # x = geom.wt / 2 - geom.l_tierod * np.cos(np.arcsin(1/geom.l_tierod * (geom.rack_spacing - (geom.l_str_arm * np.sin(theta2))))) - geom.l_str_arm * np.cos(theta2)
-    # print(x)
+    # Determine Phi
+    geom.phi = theta2(geom.rack_spacing, geom.wt, geom.l_tierod, geom.l_str_arm, 0)
+
+    # Determine rack vectors for inside and outside wheels
+    x_i = np.linspace(0, geom.x_travel, num_fit_points)
+    x_o = np.linspace(0, -geom.x_travel, num_fit_points)
+
+    # Determine corresponding theta 2 lists
+    theta2_i = theta2(geom.rack_spacing, geom.wt, geom.l_tierod, geom.l_str_arm, x_i)
+    theta2_o = theta2(geom.rack_spacing, geom.wt, geom.l_tierod, geom.l_str_arm, x_o)
     
-    
-    
-    
-    
+    # Determine corresponding theta_i and theta_o
+    theta_i = wheel_angle(theta2_i, geom.phi)
+    theta_o = wheel_angle(theta2_o, geom.phi)
+
+    # Determine ideal theta_o
+    theta_o_ideal = theta_o_ideal_eq(geom.wb, geom.wt, theta_i)
+
+    return theta_i, theta_o, theta_o_ideal
 
 
-
-
-
-
-
-
-
-
-    ## Fake Error value, should cause all values to converge to 50
-    # print(f'the works: {geom.vars()}')
-    error = 0
-    for i in geom.vars():
-        try:
-            error += (float(geom.vars()[i]) - 50.0)**2
-        except:
-            pass
-
-    return error
-
+## Helper Functions
 def theta2(a, wt, l1, l2, x):
-    d = (a**2 + wt**2)**0.5
-    theta_12 = np.arccos((l1**2 + l2**2 - d**2) / (2*l1*l2))
-    theta_a = np.arccos((l1**2 - l2**2 + d**2) / (2*l2*d))
-    theta_d =  np.arctan(a / (wt - x))
 
+    # Define initial variables
+    d = (a**2 + (wt-x)**2)**0.5
+    theta11 = np.arctan(a/(wt-x))
+    theta12 = np.arccos((d**2 + l1**2 - l2**2) / (2*d*l1))
+    theta1 = theta11 - theta12
+
+    # Calculate theta2
+    theta2 = np.arctan((a - l1*np.sin(theta1)) / (wt - x - l1*np.cos(theta1)))
+    
+    return theta2
+
+
+def wheel_angle(theta2, phi):
+    return theta2 + np.pi/2 - phi
+
+
+def theta_o_ideal_eq(wb, wt, theta_i):
+    return np.arctan((wb) / (wb/np.tan(theta_i) + 2*wt))
+
+
+# Example use
 a = str()
 print(a)
-b = sim(a, 10)
-print(f'b: {b}')
+b = sim(a, 5)
+print(f'output of sim:\n{b}')

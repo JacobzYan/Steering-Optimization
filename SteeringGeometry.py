@@ -26,7 +26,7 @@ class SteeringGeometry:
         self.l_str_arm = 100 # distance from control arm mounts to steering arm mount [mm]
         self.phi = 11*np.pi/180 # Steering Arm offset angle [deg]
         # Dependent Variables
-        self.wt = self.w_track - self.l_rack # Equivalent steering thickness [mm]
+        self.wt = (self.w_track - self.l_rack)/2 # Equivalent steering thickness [mm]
 
         ## Count number of variables
         self.var_names = list(filter(lambda x: x[0:2] != '__', dir(self)))
