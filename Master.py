@@ -100,5 +100,5 @@ def theta_o_ideal_eq(wb, wt, theta_i):
 
 # Running the simulation
 num_steps = 2 # Define the number of steps
-num_fit_points = 100
+num_fit_points = 10
 simulation_results = cartesian_product_on_the_fly_mm(num_steps,num_fit_points)
