@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov 10 19:13:16 2023
+Created on Fri Nov 10 20:03:07 2023
 
 Author: Tristan Houy
 
-Copyright: Fri Nov 10 19:13:16 2023, Tristan Houy, All rights reserved.
+Copyright: Fri Nov 10 20:03:07 2023, Tristan Houy, All rights reserved.
 """
 
 from numba import jit, prange
@@ -26,24 +26,21 @@ wt = (w_track - l_rack)/2 # Equivalent steering thickness [mm]
 #phi = 11*np.pi/180 # Steering Arm offset angle [deg]
 @jit(nopython=True,parallel=True) 
 def cartesian_product_on_the_fly_mm(num_of_step,num_fit_points):
-    rack_spacing=np.linspace(800, 900, num_of_step)
-    l_tierod=np.linspace(600, 700, num_of_step)
-    l_str_arm=np.linspace(400, 500, num_of_step)
-    phi=np.linspace(-np.pi, np.pi, num_of_step) 
+    rack_spacing=np.linspace(800, 801, num_of_step)
+    l_tierod=np.linspace(600, 601, num_of_step)
+    l_str_arm=np.linspace(400, 401, num_of_step)
     
     results = []
     
     for i in prange(rack_spacing.size):
         for j in prange(l_tierod.size):
             for k in prange(l_str_arm.size):
-                for l in prange(phi.size):
-                    current_rack_spacing = rack_spacing[i]
-                    current_l_tierod = l_tierod[j]
-                    current_l_str_arm = l_str_arm[k]
-                    current_phi = phi[l]
+                current_rack_spacing = rack_spacing[i]
+                current_l_tierod = l_tierod[j]
+                current_l_str_arm = l_str_arm[k]
 
-                    result = sim(current_rack_spacing, wt, current_l_tierod, current_l_str_arm, wb, x_travel, current_phi, num_fit_points)
-                    results.append(result)
+                result = sim(current_rack_spacing, wt, current_l_tierod, current_l_str_arm, wb, x_travel, num_fit_points)
+                results.append(result)
     return results
                 
 # Simulation Function
@@ -53,7 +50,7 @@ def cartesian_product_on_the_fly_mm(num_of_step,num_fit_points):
 # Inputs: geom -> Steering Geometry object, num_fit_points -> The length of the output vectors
 # Outputs: a vector of inner wheel angles, a vector of outer wheel angles, a vector of ideal outer wheel angles
 @jit(nopython=True, parallel=True)
-def sim(rack_spacing, wt, l_tierod, l_str_arm, wb, x_travel, phi, num_fit_points):
+def sim(rack_spacing, wt, l_tierod, l_str_arm, wb, x_travel, num_fit_points):
     
     # Determine Phi
     phi = theta2(rack_spacing, wt, l_tierod, l_str_arm, 0)
@@ -98,7 +95,19 @@ def wheel_angle(theta2, phi):
 def theta_o_ideal_eq(wb, wt, theta_i):
     return np.arctan((wb) / (wb/np.tan(theta_i) + 2*wt))
 
+# Error calculation
+@jit(nopython=True,parallel=True)
+def RMSE(y_actual_np_vector,y_predicted_np_vector):
+    
+    #squared differences
+    squared_differences=(y_actual_np_vector-y_predicted_np_vector)**2
+    
+    #square root mean of the squared errors/differences (RMSE)
+    rmse=np.sqrt(np.mean(squared_differences))
+    
+    return rmse
+
 # Running the simulation
-num_steps = 2 # Define the number of steps
-num_fit_points = 10
+num_steps = 5 # Define the number of steps
+num_fit_points = 100
 simulation_results = cartesian_product_on_the_fly_mm(num_steps,num_fit_points)
