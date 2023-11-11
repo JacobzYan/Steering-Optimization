@@ -25,7 +25,7 @@ wt = (w_track - l_rack)/2 # Equivalent steering thickness [mm]
 #l_str_arm = 100 # distance from control arm mounts to steering arm mount [mm]
 #phi = 11*np.pi/180 # Steering Arm offset angle [deg]
 @jit(nopython=True,parallel=True) 
-def cartesian_product_on_the_fly_mm(num_of_step):
+def cartesian_product_on_the_fly_mm(num_of_step,num_fit_points):
     rack_spacing=np.linspace(800, 900, num_of_step)
     l_tierod=np.linspace(600, 700, num_of_step)
     l_str_arm=np.linspace(400, 500, num_of_step)
@@ -42,7 +42,7 @@ def cartesian_product_on_the_fly_mm(num_of_step):
                     current_l_str_arm = l_str_arm[k]
                     current_phi = phi[l]
 
-                    result = sim(current_rack_spacing, wt, current_l_tierod, current_l_str_arm, wb, x_travel, current_phi, num_of_step)
+                    result = sim(current_rack_spacing, wt, current_l_tierod, current_l_str_arm, wb, x_travel, current_phi, num_fit_points)
                     results.append(result)
     return results
                 
@@ -100,5 +100,5 @@ def theta_o_ideal_eq(wb, wt, theta_i):
 
 # Running the simulation
 num_steps = 2 # Define the number of steps
-
-simulation_results = cartesian_product_on_the_fly_mm(num_steps)
+num_fit_points = 100
+simulation_results = cartesian_product_on_the_fly_mm(num_steps,num_fit_points)
