@@ -175,3 +175,12 @@ print("Optimal Geometry:")
 print("Rack Spacing:", optimal_rack_spacing)
 print("Tierod Length:", optimal_l_tierod)
 print("Steering Arm Length:", optimal_l_str_arm)
+
+# Pair each RMSE value with its original index
+indexed_rmse_results = list(enumerate(rmse_results))
+
+# Sort based on RMSE values
+indexed_rmse_results.sort(key=lambda x: x[1])
+
+# Separate the indices and sorted RMSE values
+sorted_indices, sorted_rmse = zip(*indexed_rmse_results)
