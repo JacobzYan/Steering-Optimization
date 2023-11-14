@@ -1,6 +1,6 @@
 # Steering-Optimization
 Steering System Optimization
-Given:
+Given:\n
   Wheelbase length
   Tie rod angle
   Steering rack travel
