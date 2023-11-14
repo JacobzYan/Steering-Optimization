@@ -157,8 +157,17 @@ for result in simulation_results:
     rmse = RMSE(y_actual_np_vector, y_predicted_np_vector)
     rmse_results.append(rmse)
 
+# Pair each RMSE value with its original index
+indexed_rmse_results = list(enumerate(rmse_results))
+
+# Sort based on RMSE values
+indexed_rmse_results.sort(key=lambda x: x[1])
+
+# Separate the indices and sorted RMSE values
+sorted_indices, sorted_rmse = zip(*indexed_rmse_results)
+
 # Finding the index of the minimum RMSE in the filtered results
-min_rmse = min(rmse_results)
+min_rmse = sorted_rmse[0]
 min_rmse_filtered_index = rmse_results.index(min_rmse)
 
 # Map this index back to the original index in simulation_results
@@ -180,14 +189,10 @@ print("Rack Spacing:", optimal_rack_spacing)
 print("Tierod Length:", optimal_l_tierod)
 print("Steering Arm Length:", optimal_l_str_arm)
 
-# Pair each RMSE value with its original index
-indexed_rmse_results = list(enumerate(rmse_results))
+# My Stuff
+print(f'\nlen sorted:{len(sorted_rmse)}')
+print(f'first 5 rmse: {sorted_rmse[0:5]}')
 
-# Sort based on RMSE values
-indexed_rmse_results.sort(key=lambda x: x[1])
-
-# Separate the indices and sorted RMSE values
-sorted_indices, sorted_rmse = zip(*indexed_rmse_results)
 
 # import matplotlib.pyplot as plt
 # import matplotlib.animation as animation
