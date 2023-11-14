@@ -36,6 +36,11 @@ l_tierod_upper = 350
 l_str_arm_lower = 50.1 # Distance from control arm mounts to steering arm mount [mm]
 l_str_arm_upper = 800
 
+"""
+Everything above this point is a variable you can change.
+Everything below is code you do not change.
+"""
+
 rack_spacing=np.linspace(rack_spacing_lower, rack_spacing_upper, num_steps)
 l_tierod=np.linspace(l_tierod_lower, l_tierod_upper, num_steps)
 l_str_arm=np.linspace(l_str_arm_lower, l_str_arm_upper, num_steps)
