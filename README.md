@@ -12,7 +12,7 @@ Finds
   -Tie rod length  
   -Steering arm length  
 How to use code:  
--1) Designate the number of steps and granularity.  
+-1 Designate the number of steps and granularity.  
 -2) Change Constant variables to fit your design constraint.  
 -3) Input lower and upper bounds on the variables you want to find.  
 Output:  
