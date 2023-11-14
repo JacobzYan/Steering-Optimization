@@ -9,16 +9,17 @@ Copyright: Fri Nov 10 20:03:07 2023, Tristan Houy, All rights reserved.
 
 from numba import jit, prange
 import numpy as np
+import matplotlib.pyplot as plt
 
 #def everything():
 # Simulation parameters
-num_steps = 10 # Define the number of steps
+num_steps = 5 # Define the number of steps
 num_fit_points = 100 # Define granularity
 
 # Constants
 phi_lower_bound = np.radians(-15) # Lower bound for phi in radians [Deg] -> [Rad]
-wb = 1500 # Wheelbase [mm]
-x_travel = 30 # Steering rack travel [mm]
+wb = 2000 # Wheelbase [mm]
+x_travel = 80 # Steering rack travel [mm]
 w_track = 800 # Track width [mm]
 l_rack = 300 # Steering rack length [mm]
 
@@ -33,7 +34,7 @@ l_tierod_lower = 50 # Tierod length [mm]
 l_tierod_upper = 350
 
 l_str_arm_lower = 50.1 # Distance from control arm mounts to steering arm mount [mm]
-l_str_arm_upper = 350
+l_str_arm_upper = 800
 
 rack_spacing=np.linspace(rack_spacing_lower, rack_spacing_upper, num_steps)
 l_tierod=np.linspace(l_tierod_lower, l_tierod_upper, num_steps)
@@ -73,15 +74,15 @@ def sim(rack_spacing, wt, l_tierod, l_str_arm, wb, x_travel, num_fit_points, phi
     
     else:
         # Determine rack vectors for inside and outside wheels
-        x_i = np.linspace(0, x_travel, num_fit_points)
-        x_o = np.linspace(0, -x_travel, num_fit_points)
+        x_i = np.linspace(0, -x_travel, num_fit_points)
+        x_o = np.linspace(0, x_travel, num_fit_points)
     
         # Determine corresponding theta 2 lists
         theta2_i = theta2(rack_spacing, wt, l_tierod, l_str_arm, x_i)
         theta2_o = theta2(rack_spacing, wt, l_tierod, l_str_arm, x_o)
         
         # Determine corresponding theta_i and theta_o
-        theta_i = wheel_angle(theta2_i, phi)
+        theta_i = np.pi - wheel_angle(theta2_i, phi)
         theta_o = wheel_angle(theta2_o, phi)
     
         # Determine ideal theta_o
@@ -118,7 +119,7 @@ def wheel_angle(theta2, phi):
 
 @jit(nopython=True, parallel=True)
 def theta_o_ideal_eq(wb, wt, theta_i):
-    return np.arctan((wb) / (wb/np.tan(theta_i) + 2*wt))
+    return np.pi/2 - np.arctan((wb) / (wb/np.tan(np.pi/2 - theta_i) + 2*wt))
 
 # Error calculation
 @jit(nopython=True,parallel=True)
@@ -166,6 +167,7 @@ indexed_rmse_results.sort(key=lambda x: x[1])
 # Separate the indices and sorted RMSE values
 sorted_indices, sorted_rmse = zip(*indexed_rmse_results)
 
+
 # Finding the index of the minimum RMSE in the filtered results
 min_rmse = sorted_rmse[0]
 min_rmse_filtered_index = rmse_results.index(min_rmse)
@@ -189,7 +191,55 @@ print("Rack Spacing:", optimal_rack_spacing)
 print("Tierod Length:", optimal_l_tierod)
 print("Steering Arm Length:", optimal_l_str_arm)
 
-# My Stuff
+# Cacluate performance from geometry
+[theta_i_plot, theta_o_plot, theta_o_ideal_plot] = sim(optimal_rack_spacing, wt, optimal_l_tierod, optimal_l_str_arm, wb, x_travel, num_fit_points, phi_lower_bound)
+
+# Plotting setup
+plt.figure()
+# Save plotting range
+x_range = [min(theta_i_plot)-0.05, max(theta_i_plot)+0.05]
+y_range = [min(theta_o_ideal_plot)-0.05, max(theta_o_ideal_plot)+0.05]
+y_ticks = []
+for i in list(np.linspace(y_range[0], y_range[1], 5)):
+    y_ticks.append(round(i, 3))
+
+
+# Plot ideal
+plt.plot(theta_i_plot, theta_o_ideal_plot, 'k-', linewidth = 8, label = 'Ideal Curve')
+plt.plot(theta_i_plot, theta_o_plot, 'r--', linewidth = 2, label = f'Best Fit Curve: rsme = {min_rmse}')
+
+# For next hundred 
+num_graphs = 100
+for i in sorted_rmse[1:num_graphs+1]:
+
+    min_rmse_filtered_index = rmse_results.index(i)
+
+    # Map this index back to the original index in simulation_results
+    min_rmse_original_index = valid_indices[min_rmse_filtered_index]
+
+    # Calculate the index in each dimension using the original index
+    index_rack_spacing = (min_rmse_original_index // (num_steps ** 2)) % num_steps
+    index_l_tierod = (min_rmse_original_index // num_steps) % num_steps
+    index_l_str_arm = min_rmse_original_index % num_steps
+
+    # Retrieve the optimal values
+    optimal_rack_spacing = rack_spacing[index_rack_spacing]
+    optimal_l_tierod = l_tierod[index_l_tierod]
+    optimal_l_str_arm = l_str_arm[index_l_str_arm]
+
+    # Cacluate performance from geometry
+    [theta_i_plot, theta_o_plot, theta_o_ideal_plot] = sim(optimal_rack_spacing, wt, optimal_l_tierod, optimal_l_str_arm, wb, x_travel, num_fit_points, phi_lower_bound)
+    plt.plot(theta_i_plot, theta_o_plot, '--', 'color', 'tab:gray', linewidth = 0.25)
+
+plt.title(f'Comparison of inner and outer wheel curves with step count of {num_steps}')
+plt.xlabel('Inner Wheel Angle [rad]')
+plt.ylabel('Outer Wheel Angle [rad]')
+plt.xlim(x_range)
+plt.ylim(y_range)
+plt.legend(loc='best')
+plt.yticks(y_ticks, y_ticks) 
+plt.show()
+# Debugging
 print(f'\nlen sorted:{len(sorted_rmse)}')
 print(f'first 5 rmse: {sorted_rmse[0:5]}')
 
