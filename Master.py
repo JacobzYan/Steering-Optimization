@@ -10,10 +10,9 @@ Copyright: Fri Nov 10 20:03:07 2023, Tristan Houy, Jacob Yan, Edward Kim, All ri
 from numba import jit, prange
 import numpy as np
 import matplotlib.pyplot as plt
-
-#def everything():
+'''-------------------------------------------------OPTIMIZATION PARAMETERS---------------------------------------------------------'''
 # Simulation parameters
-num_steps = 5 # Define the number of steps
+num_steps = 10 # Define the number of steps
 num_fit_points = 100 # Define granularity
 
 # Constants
@@ -36,15 +35,20 @@ l_tierod_upper = 350
 l_str_arm_lower = 50.1 # Distance from control arm mounts to steering arm mount [mm]
 l_str_arm_upper = 800
 
+# Plotting parameters
+num_graphs = 100 # Number of next best fits to plot
 """
+----------------------------------------------------------------------------------------------------------------------------------------
 Everything above this point is a variable you can change.
 Everything below is code you do not change.
 """
 
+# Define initial variable vectors
 rack_spacing=np.linspace(rack_spacing_lower, rack_spacing_upper, num_steps)
 l_tierod=np.linspace(l_tierod_lower, l_tierod_upper, num_steps)
 l_str_arm=np.linspace(l_str_arm_lower, l_str_arm_upper, num_steps)
 
+# Define helper function to pull parameters
 @jit(nopython=True,parallel=False) 
 def cartesian_product_on_the_fly_mm(num_fit_points, rack_spacing, l_tierod, l_str_arm):
     results = []
@@ -118,10 +122,13 @@ def theta2(a, wt, l1, l2, x):
     theta2 = np.arctan((a - l1*np.sin(theta1)) / (wt - x - l1*np.cos(theta1)))
     return theta2
 
+
+# Helper function to add wheel offset to steering arm angle
 @jit(nopython=True, parallel=True)
 def wheel_angle(theta2, phi):
     return theta2 + np.pi/2 - phi
 
+# Helper function to calculate ideal outer wheel angle
 @jit(nopython=True, parallel=True)
 def theta_o_ideal_eq(wb, wt, theta_i):
     return np.pi/2 - np.arctan((wb) / (wb/np.tan(np.pi/2 - theta_i) + 2*wt))
@@ -157,6 +164,7 @@ simulation_results = filtered_simulation_results
 # Running the error calculation
 rmse_results = []
 
+# Collect RMSE values
 for result in simulation_results:
     y_actual_np_vector = result[1, :]
     y_predicted_np_vector = result[2, :]
@@ -171,7 +179,6 @@ indexed_rmse_results.sort(key=lambda x: x[1])
 
 # Separate the indices and sorted RMSE values
 sorted_indices, sorted_rmse = zip(*indexed_rmse_results)
-
 
 # Finding the index of the minimum RMSE in the filtered results
 min_rmse = sorted_rmse[0]
@@ -190,6 +197,7 @@ optimal_rack_spacing = rack_spacing[index_rack_spacing]
 optimal_l_tierod = l_tierod[index_l_tierod]
 optimal_l_str_arm = l_str_arm[index_l_str_arm]
 
+# Output Ideal value information
 print("Minimum RMSE:", min_rmse, "at index", min_rmse_original_index)
 print("Optimal Geometry:")
 print("Rack Spacing:", optimal_rack_spacing)
@@ -209,12 +217,12 @@ for i in list(np.linspace(y_range[0], y_range[1], 5)):
     y_ticks.append(round(i, 3))
 
 
-# Plot ideal
+# Plot ideal solution and best optimized solution
 plt.plot(theta_i_plot, theta_o_ideal_plot, 'k-', linewidth = 8, label = 'Ideal Curve')
 plt.plot(theta_i_plot, theta_o_plot, 'r--', linewidth = 2, label = f'Best Fit Curve: rsme = {min_rmse}')
 
-# For next hundred 
-num_graphs = 100
+# Calculate and plot curves for the next 100 best fitting curves 
+
 for i in sorted_rmse[1:num_graphs+1]:
 
     min_rmse_filtered_index = rmse_results.index(i)
@@ -236,6 +244,7 @@ for i in sorted_rmse[1:num_graphs+1]:
     [theta_i_plot, theta_o_plot, theta_o_ideal_plot] = sim(optimal_rack_spacing, wt, optimal_l_tierod, optimal_l_str_arm, wb, x_travel, num_fit_points, phi_lower_bound)
     plt.plot(theta_i_plot, theta_o_plot, '--', 'color', 'tab:gray', linewidth = 0.25)
 
+# Format and display figure
 plt.title(f'Comparison of inner and outer wheel curves with step count of {num_steps}')
 plt.xlabel('Inner Wheel Angle [rad]')
 plt.ylabel('Outer Wheel Angle [rad]')
@@ -244,10 +253,5 @@ plt.ylim(y_range)
 plt.legend(loc='best')
 plt.yticks(y_ticks, y_ticks) 
 plt.show()
-# Debugging
-print(f'\nlen sorted:{len(sorted_rmse)}')
-print(f'first 5 rmse: {sorted_rmse[0:5]}')
 
 
-#if __name__ == '__main__':
-#    everything()
