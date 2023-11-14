@@ -152,6 +152,11 @@ def everything():
     
     # Finding the index of the minimum RMSE in the filtered results
     min_rmse = min(rmse_results)
+    print(f'length of iterable: {len(rmse_results)}')
+    sorted_rmse = rmse_results.copy()
+    sorted_rmse.sort()
+    print(f'first 5 sorted: {sorted_rmse[0:6]}')
+    print(f'first 5: {rmse_results[0:6]}')
     min_rmse_filtered_index = rmse_results.index(min_rmse)
     
     # Map this index back to the original index in simulation_results
