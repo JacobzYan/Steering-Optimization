@@ -244,45 +244,5 @@ print(f'\nlen sorted:{len(sorted_rmse)}')
 print(f'first 5 rmse: {sorted_rmse[0:5]}')
 
 
-# import matplotlib.pyplot as plt
-# import matplotlib.animation as animation
-
-# # Assuming you have the simulation_results and rmse_results from your simulations
-# # simulation_results should be a list where each item is a numpy array of the form: [theta_i, theta_o, theta_o_ideal]
-# # rmse_results should be a list of corresponding RMSE values
-
-# # Pair each RMSE value with its original index
-# indexed_rmse_results = list(enumerate(rmse_results))
-
-# # Sort based on RMSE values
-# indexed_rmse_results.sort(key=lambda x: x[1])
-
-# # Extract the indices of the sorted RMSE values
-# sorted_indices = [index for index, _ in indexed_rmse_results]
-
-# # Reorder the simulation_results based on the sorted_indices
-# sorted_simulation_results = [simulation_results[i] for i in sorted_indices]
-
-# # Initialize the figure for animation
-# fig, ax = plt.subplots()
-
-# # Animation function
-# def animate(i):
-#     ax.clear()
-#     result = sorted_simulation_results[i]
-#     theta_i, theta_o, theta_o_ideal = result
-#     ax.plot(theta_i, theta_o, label='Theta_i vs Theta_o')
-#     ax.plot(theta_i, theta_o_ideal, label='Theta_i vs Theta_o_ideal')
-#     ax.set_title(f"Frame {i+1} (RMSE: {indexed_rmse_results[i][1]:.2f})")
-#     ax.legend()
-
-# # Create animation
-# ani = animation.FuncAnimation(fig, animate, frames=min(100, len(sorted_simulation_results)), interval=250)
-
-# # Saving the animation as a GIF
-# # Adjust the file path as needed for your system
-# ani.save('simulation_animation.gif', writer='pillow', fps=4)
-# plt.close()
-    
 #if __name__ == '__main__':
 #    everything()
