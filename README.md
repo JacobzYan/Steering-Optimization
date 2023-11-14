@@ -19,5 +19,5 @@ Output:
 -1 Minimum RMSE  
 -2 The optimal geometry  
 -3 Number of valid RMSE's checked  
--4 Lowest 5 RMSE values  
+-4 Lowest 5 RMSE values    
 -5 Graph of the ideal Ratio in bolded black and the best RMSE ratio in dotted red line
