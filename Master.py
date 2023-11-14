@@ -2,9 +2,9 @@
 """
 Created on Fri Nov 10 20:03:07 2023
 
-Author: Tristan Houy
+Authors: Tristan Houy, Jacob Yan, Edward Kim
 
-Copyright: Fri Nov 10 20:03:07 2023, Tristan Houy, All rights reserved.
+Copyright: Fri Nov 10 20:03:07 2023, Tristan Houy, Jacob Yan, Edward Kim, All rights reserved.
 """
 
 from numba import jit, prange
