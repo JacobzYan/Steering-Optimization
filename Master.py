@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 '''
 -------------------------------------------- INPUT INFO --------------------------------------------
 Inputs:
+
+An object with the following public attributes:
+
 num_steps:
     int
     Number of steps variable ranges will be divided into
@@ -60,12 +63,24 @@ fig:
     optimal geomery
 '''
 
-def Simulate(num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, l_rack, rack_spacing, l_tierod, l_str_arm, num_graphs, fig: plt.figure()):
+def Simulate(input_geom):
+    num_steps = input_geom.num_steps
+    num_fit_points = input_geom.num_fit_points
+    phi_lower_bound = input_geom.phi_lower_bound
+    wb = input_geom.wb
+    x_travel = input_geom.x_travel
+    w_track = input_geom.w_track
+    l_rack = input_geom.l_rack
+    rack_spacing = input_geom.rack_spacing
+    l_tierod = input_geom.l_tierod
+    l_str_arm = input_geom.l_str_arm
+    num_graphs = input_geom.num_graphs
+    fig = input_geom.f
     '''-------------------------------------------------OPTIMIZATION PARAMETERS---------------------------------------------------------'''
     
     wt = (w_track - l_rack)/2 # Equivalent steering thickness [mm]
-    rack_spacing_lower =  rack_spacing.min() # Front/back distance between steering rack axis and control arm bearing mounting [mm]
-    rack_spacing_upper =  rack_spacing.max()
+    rack_spacing_lower =  rack_spacing[0] # Front/back distance between steering rack axis and control arm bearing mounting [mm]
+    rack_spacing_upper =  rack_spacing[1]
     
     l_tierod_lower = l_tierod[0] # Tierod length [mm]
     l_tierod_upper = l_tierod[1]
@@ -290,8 +305,24 @@ def Simulate(num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, 
     return fig, [optimal_rack_spacing, optimal_l_tierod, optimal_l_str_arm]
 
 
-# Tester
+# -------------------------------------------------------Tester---------------------------------------------------------------------------------------
 if __name__ == "__main__":
+
+    class Geom():
+         def __init__(self, num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, l_rack, rack_spacing, l_tierod, l_str_arm, num_graphs, f):
+             self.num_steps = num_steps
+             self.num_fit_points = num_fit_points
+             self.phi_lower_bound = phi_lower_bound
+             self.wb = wb
+             self.x_travel = x_travel
+             self.w_track = w_track
+             self.l_rack = l_rack
+             self.rack_spacing = rack_spacing
+             self.l_tierod = l_tierod
+             self.l_str_arm = l_str_arm
+             self.num_graphs = num_graphs
+             self.f = f
+
     # Simulation parameters
     num_steps = 5 # Define the number of steps
     num_fit_points = 100 # Define granularity
@@ -318,9 +349,10 @@ if __name__ == "__main__":
 
     # Call function
     f = plt.figure(1)
-    f, geom = Simulate(num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, l_rack, rack_spacing, l_tierod, l_str_arm, num_graphs, f)
+    tester = Geom(num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, l_rack, rack_spacing, l_tierod, l_str_arm, num_graphs, f)
+    
+    f, geom = Simulate(tester)
 
     # Display
     print(f'Geom: {geom}')
-    print(f'type of f: {type(f)}')
     plt.show()
