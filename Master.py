@@ -71,22 +71,20 @@ def Simulate(input_geom):
     x_travel = input_geom.x_travel
     w_track = input_geom.w_track
     l_rack = input_geom.l_rack
-    rack_spacing = input_geom.rack_spacing
-    l_tierod = input_geom.l_tierod
-    l_str_arm = input_geom.l_str_arm
+    # rack_spacing = input_geom.rack_spacing
+    rack_spacing_lower = input_geom.rack_spacing_lower
+    rack_spacing_upper = input_geom.rack_spacing_upper
+    # l_tierod = input_geom.l_tierod
+    l_tierod_lower = input_geom.l_tierod_lower
+    l_tierod_upper = input_geom.l_tierod_upper
+    # l_str_arm = input_geom.l_str_arm
+    l_str_arm_lower = input_geom.l_str_arm_lower
+    l_str_arm_upper = input_geom.l_str_arm_upper
     num_graphs = input_geom.num_graphs
     fig = input_geom.f
     '''-------------------------------------------------OPTIMIZATION PARAMETERS---------------------------------------------------------'''
     
     wt = (w_track - l_rack)/2 # Equivalent steering thickness [mm]
-    rack_spacing_lower =  rack_spacing[0] # Front/back distance between steering rack axis and control arm bearing mounting [mm]
-    rack_spacing_upper =  rack_spacing[1]
-    
-    l_tierod_lower = l_tierod[0] # Tierod length [mm]
-    l_tierod_upper = l_tierod[1]
-
-    l_str_arm_lower = l_tierod[0] # Distance from control arm mounts to steering arm mount [mm]
-    l_str_arm_upper = l_tierod[1]
  
 
     # Define initial variable vectors
@@ -309,22 +307,25 @@ def Simulate(input_geom):
 if __name__ == "__main__":
 
     class Geom():
-         def __init__(self, num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, l_rack, rack_spacing, l_tierod, l_str_arm, num_graphs, f):
-             self.num_steps = num_steps
-             self.num_fit_points = num_fit_points
-             self.phi_lower_bound = phi_lower_bound
-             self.wb = wb
-             self.x_travel = x_travel
-             self.w_track = w_track
-             self.l_rack = l_rack
-             self.rack_spacing = rack_spacing
-             self.l_tierod = l_tierod
-             self.l_str_arm = l_str_arm
-             self.num_graphs = num_graphs
-             self.f = f
+         def __init__(self, num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, l_rack, rack_spacing_lower, rack_spacing_upper, l_tierod_lower, l_tierod_upper, l_str_arm_lower, l_str_arm_upper, num_graphs, f):
+            self.num_steps = num_steps
+            self.num_fit_points = num_fit_points
+            self.phi_lower_bound = phi_lower_bound
+            self.wb = wb
+            self.x_travel = x_travel
+            self.w_track = w_track
+            self.l_rack = l_rack
+            self.rack_spacing_lower = rack_spacing_lower
+            self.rack_spacing_upper = rack_spacing_upper
+            self.l_tierod_lower = l_tierod_lower
+            self.l_tierod_upper = l_tierod_upper
+            self.l_str_arm_lower = l_str_arm_lower  
+            self.l_str_arm_upper = l_str_arm_upper
+            self.num_graphs = num_graphs
+            self.f = f
 
     # Simulation parameters
-    num_steps = 5 # Define the number of steps
+    num_steps = 10 # Define the number of steps
     num_fit_points = 100 # Define granularity
 
     # Constants
@@ -339,17 +340,23 @@ if __name__ == "__main__":
 
     # Variables
     rack_spacing = [50.2, 450] # Front/back distance between steering rack axis and control arm bearing mounting [mm]
+    rack_spacing_lower = rack_spacing[0]
+    rack_spacing_upper = rack_spacing[1]
 
     l_tierod = [50, 350] # Tierod length [mm]
+    l_tierod_lower = l_tierod[0]
+    l_tierod_upper = l_tierod[1]
 
     l_str_arm = [50.1, 800] # Distance from control arm mounts to steering arm mount [mm]
-
+    l_str_arm_lower = l_str_arm[0]
+    l_str_arm_upper = l_str_arm[1]
+    
     # Plotting parameters
     num_graphs = 100 # Number of next best fits to plot
 
     # Call function
     f = plt.figure(1)
-    tester = Geom(num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, l_rack, rack_spacing, l_tierod, l_str_arm, num_graphs, f)
+    tester = Geom(num_steps, num_fit_points, phi_lower_bound, wb, x_travel, w_track, l_rack, rack_spacing_lower, rack_spacing_upper, l_tierod_lower, l_tierod_upper, l_str_arm_lower, l_str_arm_upper, num_graphs, f)
     
     f, geom = Simulate(tester)
 
