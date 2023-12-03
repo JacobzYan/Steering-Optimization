@@ -19,4 +19,5 @@
      - Distance of Control Arm Lower Limit [mm]:
      - Distance of Control Arm Upper Limit [mm]:
 ## 6) Press Run Simulation
+     - Wait 10 seconds for results, longer if Number of Fit Points is large
 ## 7) Results of optimal geometry are listed at the bottom.
