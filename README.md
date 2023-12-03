@@ -13,7 +13,7 @@
      - Track Width [mm]: Distance from left to right tire
 ## 5) Input Variables  
      - Rack Spacing Lower Limit [mm]: 
-     - Rack Spacing Upper Limit [mm];
+     - Rack Spacing Upper Limit [mm]:
      - Tierod Length Lower Limit [mm]:
      - Tierod Length Upper Limit [mm]:
      - Distance of Control Arm Lower Limit [mm]:
