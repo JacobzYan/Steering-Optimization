@@ -1,26 +1,24 @@
-# Steering-Optimization  
+## Steering-Optimization  
 Steering System Optimization  
-Given:  
-  -Wheelbase length  
-  -Tie rod angle  
-  -Steering rack travel  
-  -Track width  
-  -Steering rack length  
-  -Steering thickness  
-Finds  
-  -Rack spacing  
-  -Tie rod length  
-  -Steering arm length  
   
-All variables are in the top half of the code
-  
-How to use code:  
--1 Designate the number of steps and granularity.  
--2 Change Constant variables to fit your design constraint.  
--3 Input lower and upper bounds on the variables you want to find.  
-Output:  
--1 Minimum RMSE  
--2 The optimal geometry  
--3 Number of valid RMSE's checked  
--4 Lowest 5 RMSE values    
--5 Graph of the ideal Ratio in bolded black and the best RMSE ratio in dotted red line
+# 1) Run XXXX.exe  
+# 2) Input Simulation Parameters  
+     - Number of Steps: Determines the amount of intervals given the lower and upper limit in the variables section.  
+     - Number of Fit Points: Granularity of plotting.
+# 3) Input Plotting Parameters
+     - Number of Best Fits to Plot: Plots the best geometry and x next best geometries on one graph.
+
+# 4) Input Constants
+     - Phi Lower Bound [Degree]:
+     - Wheelbase [mm]:
+     - Steering Rack Travel [mm]:
+     - Track Width [mm]:
+# 5) Input Variables  
+     - Rack Spacing Lower Limit [mm]:
+     - Rack Spacing Upper Limit [mm];
+     - Tierod Length Lower Limit [mm]:
+     - Tierod Length Upper Limit [mm]:
+     - Distance of Control Arm Lower Limit [mm]:
+     - Distance of Control Arm Upper Limit [mm]:
+# 6) Press Run Simulation
+# 7) Results of optimal geometry are listed at the bottom.
