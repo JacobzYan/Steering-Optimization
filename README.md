@@ -1,6 +1,7 @@
 # Steering-Optimization  
   
-## 1) Run XXXX.exe  
+## 1) Run G01 Executable.exe  
+     - Will first pull up the command prompt. It will take a few seconds for the GUI to pop up.
 ## 2) Input Simulation Parameters  
      - Number of Steps: Determines the amount of intervals given the lower and upper limit in the variables section  
      - Number of Fit Points: Granularity of plotting
